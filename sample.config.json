@@ -1,0 +1,7 @@
+{
+    "phpMyAdminDir": "/var/www/phpmyadmin",
+    "skipDelete": [
+        "config.inc.php"
+    ],
+    "phpMyAdminGitHubReleaseURL": "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest"
+}
