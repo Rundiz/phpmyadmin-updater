@@ -1,5 +1,8 @@
 /**
- * ZIP extractor.
+ * Move files from inside parent folder to outside where it is main folder.
+ * 
+ * Example: files are in dir/phpmyadmin/*.*  
+ * Move them to dir/*.*
  */
 
 
@@ -9,17 +12,13 @@
 import fs from 'node:fs';
 import fse from 'fs-extra';
 import path from 'node:path';
-import spawn from 'node:child_process';
 import FS from '../Libraries/FS.mjs';
 
 
-export const zipExtractor = class ZipExtractor {
+export const filesMover = class FilesMover {
 
 
     #configJSON = {};
-
-
-    #saveFilePath = '';
 
 
     /**
@@ -27,39 +26,12 @@ export const zipExtractor = class ZipExtractor {
      * 
      * @param {object} options The options
      * @param {object} options.configJSON The config.json contents object.
-     * @param {string} options.saveFilePath Downloaded and saved phpmyadmin zip file path.
      */
     constructor(options = {}) {
         if (typeof(options?.configJSON) === 'object') {
             this.#configJSON = options.configJSON;
         }
-        if (typeof(options?.saveFilePath) === 'string') {
-            this.#saveFilePath = options.saveFilePath;
-        }
     }// constructor
-
-
-    /**
-     * Delete downloaded zip file.
-     */
-    async #deleteDownloadedZip() {
-        fs.unlinkSync(this.#saveFilePath);
-        console.log('  Deleted downloaded zip file successfully.');
-    }// #deleteDownloadedZip
-
-
-    /**
-     * Extract files from zip.
-     * 
-     * It will be contain phpmyadmin/ folder and contents are inside.
-     * 
-     * @async
-     */
-    async #extract() {
-        const result = spawn.execSync('7z x "' + this.#saveFilePath + '" -o"' + this.#configJSON.phpMyAdminDir + '"');
-        console.log('  Extracted files successfully.');
-        return result;
-    }// #extract
 
 
     /**
@@ -129,14 +101,12 @@ export const zipExtractor = class ZipExtractor {
      * @returns {Promise}
      */
     async run() {
-        console.log('Extracting zip');
+        console.log('Moving files and folders inside sub folder to main folder.');
 
-        await this.#extract();
         const parentFolderName = await this.#getExtractedParentFolderName();
         await this.#moveFilesInParentFolderToOutside(parentFolderName);
-        await this.#deleteDownloadedZip();
 
-        console.log('Extract completed.');
+        return Promise.resolve(true);
     }// run
 
 

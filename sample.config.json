@@ -3,5 +3,6 @@
     "skipDelete": [
         "config.inc.php"
     ],
-    "phpMyAdminGitHubReleaseURL": "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest"
+    "composerPackage": "phpmyadmin/phpmyadmin",
+    "composerPath": "/usr/local/bin/composer"
 }

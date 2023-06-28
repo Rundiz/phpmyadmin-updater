@@ -8,8 +8,8 @@
 
 import * as fs from 'node:fs';
 import { clearOldFilesTask } from './app/Tasks/clearOldFiles.mjs';
-import { gitDownloader } from './app/Tasks/gitDownloader.mjs';
-import { zipExtractor } from './app/Tasks/zipExtractor.mjs';
+import { composerUpdater } from './app/Tasks/composerUpdater.mjs';
+import { filesMover } from './app/Tasks/filesMover.mjs';
 
 
 // read config.json. ---------------------------
@@ -25,7 +25,8 @@ if (typeof(configJSON) !== 'object') {
 }
 console.log('Update phpMyAdmin');
 
-let result, saveFilePath;
+
+let pmaVersion, result, saveFilePath;
 try {
     const clearOldFilesTaskObj = new clearOldFilesTask({'configJSON': configJSON});
     result = await clearOldFilesTaskObj.run();
@@ -33,22 +34,21 @@ try {
     console.error('Error: ' + ex.message);
 }
 
-if (typeof(result) !== 'undefined') {
+
+if (result) {
     try {
-        const gitDownloaderObj = new gitDownloader({'configJSON': configJSON});
-        saveFilePath = await gitDownloaderObj.run();
+        const composerUpdaterObj = new composerUpdater({'configJSON': configJSON});
+        result = await composerUpdaterObj.run();
     } catch (ex) {
         console.error('Error: ' + ex.message);
     }
 }
 
-if (saveFilePath) {
+
+if (result) {
     try {
-        const zipExtractorObj = new zipExtractor({
-            'configJSON': configJSON, 
-            'saveFilePath': saveFilePath,
-        });
-        await zipExtractorObj.run();
+        const filesMoverObj = new filesMover({'configJSON': configJSON});
+        await filesMoverObj.run();
         console.log('Update completed successfully.');
     } catch (ex) {
         console.error('Error: ' + ex.message);
